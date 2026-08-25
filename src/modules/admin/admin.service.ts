@@ -3,6 +3,7 @@ import { PrismaService } from '../../config/database/prisma.service';
 import { AdminDto } from './dto/admin.dto';
 import { Crypt } from '../../infrastructure/lib/Crypt';
 import { successRes } from '../../common/helper/success-response';
+import { generateOTP } from '../../common/helper/otp-generator';
 
 @Injectable()
 export class AdminService {
@@ -36,6 +37,7 @@ export class AdminService {
         if (!isMatchPass) {
             throw new BadRequestException('Telefon raqam yoki parol xato');
         }
-        
+        const otp = generateOTP();
+        return successRes({ otp }, 201);
     }
 }

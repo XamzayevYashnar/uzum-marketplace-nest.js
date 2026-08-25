@@ -4,10 +4,15 @@ import { AdminDto } from './dto/admin.dto';
 
 @Controller('admin')
 export class AdminController {
-  constructor(private readonly adminService: AdminService) {}
+  constructor(private readonly adminService: AdminService) { }
 
   @Post()
   create(@Body() dto: AdminDto) {
     return this.adminService.create(dto);
+  }
+
+  @Post('signin')
+  signIn(@Body() dto: AdminDto) {
+    return this.adminService.signIn(dto);
   }
 }
