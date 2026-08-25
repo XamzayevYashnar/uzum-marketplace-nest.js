@@ -4,6 +4,7 @@ import { env } from './config';
 import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AllExceptionsFilter } from './common/filter/all-exception.filter';
 
 export class App {
   static async main() {
@@ -18,6 +19,8 @@ export class App {
         forbidNonWhitelisted: true,
       }),
     );
+
+    app.useGlobalFilters(new AllExceptionsFilter());
 
     app.use(helmet());
 

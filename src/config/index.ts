@@ -6,6 +6,6 @@ export const env = {
   DB_URI: String(process.env.DB_URI),
   SUPERADMIN: {
     PHONE: String(process.env.SUPERADMIN_PHONE),
-    PASSWORD: String(process.env.SUPERADMIN_PASSWORD)
-  }
+    PASSWORD: String(process.env.SUPERADMIN_PASSWORD),
+  },
 };
