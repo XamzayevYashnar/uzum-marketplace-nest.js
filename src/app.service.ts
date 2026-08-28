@@ -10,7 +10,7 @@ export class App {
   static async main() {
     const app = await NestFactory.create(AppModule);
     const PORT = env.PORT;
-    const url = '/api/v1';
+    const url = 'api/v1';
 
     app.useGlobalPipes(
       new ValidationPipe({
@@ -28,12 +28,18 @@ export class App {
 
     app.setGlobalPrefix(url);
     const config = new DocumentBuilder()
-      .setTitle('N29 marketplace demo project')
+      .setTitle('Uzum marketplace production project')
+      .setDescription('Marketplace microservice')
       .setVersion('1.0')
       .build();
+
     const documentFactory = () => SwaggerModule.createDocument(app, config);
+    
     SwaggerModule.setup(`${url}/docs`, app, documentFactory);
 
-    app.listen(PORT, () => console.log('Server running on port', PORT));
+    app.listen(env.PORT ?? 3050, ()=>{
+      console.log(`Server is running on http://localhost:${env.PORT}/${url}`)
+      console.log(`Swagger is running on http://localhost:${env.PORT}/${url}/docs`)
+    })
   }
 }
