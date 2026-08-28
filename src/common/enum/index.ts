@@ -1,1 +1,1 @@
-export type AllowedModels = 'admin' | 'manager' | 'customer';
+export type AllowedModels = 'admin' | 'manager' | 'client';
