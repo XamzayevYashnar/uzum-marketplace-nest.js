@@ -28,8 +28,11 @@ model User {
   hashedPassword String
   fullName       String?
   imageUrl       String?
+
   admins         Admin[]
   sellers        Seller[] 
+  clients        Client[] 
+  
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }
@@ -46,6 +49,14 @@ model Seller {
   id     Int    @id @default(autoincrement())
   status Status @default(PENDING)
   role   Roles  @default(SELLER)
+  userId Int    @unique
+  user   User   @relation(fields: [userId], references: [id])
+}
+
+model Client {
+  id     Int    @id @default(autoincrement())
+  status Status @default(PENDING)
+  role   Roles  @default(CLIENT)
   userId Int    @unique
   user   User   @relation(fields: [userId], references: [id])
 }

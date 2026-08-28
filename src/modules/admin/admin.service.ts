@@ -5,6 +5,6 @@ import { PrismaService } from "../../config/database/prisma.service";
 @Injectable() 
 export class AdminService extends AuthService {
   constructor(private readonly prismaService: PrismaService) {
-    super(prismaService, prismaService.admin);
+    super(prismaService, 'admin');
   }
 }
