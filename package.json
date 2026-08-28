@@ -46,6 +46,7 @@
     "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.0",
     "@types/jest": "^30.0.0",
+    "@types/ms": "^2.1.0",
     "@types/node": "^24.0.0",
     "@types/otp-generator": "^4.0.2",
     "@types/supertest": "^7.0.0",

@@ -1,45 +1,67 @@
-import { ConflictException, Injectable, UnauthorizedException } from "@nestjs/common";
-import { PrismaService } from "../../config/database/prisma.service";
-import { SignInDto } from "../types/sign-in-dto";
-import { Crypt } from "../../infrastructure/lib/Crypt";
+import { 
+  ConflictException, 
+  Injectable, 
+  UnauthorizedException, 
+  ForbiddenException 
+} from "@nestjs/common"; 
+import { PrismaService } from "../../config/database/prisma.service"; 
+import { SignInDto } from "../types/sign-in-dto"; 
+import { Crypt } from "../../infrastructure/lib/Crypt"; 
+import { Token } from "../../infrastructure/lib/Token"; 
+import type { Response } from "express"; 
+import type { AllowedModels } from "../enum";
 
 @Injectable() 
-export class AuthService {
-  constructor(
+export class AuthService { 
+  constructor( 
     protected readonly prisma: PrismaService, 
-    protected readonly model: string,
-  ) {}
+    protected readonly model: AllowedModels, 
+  ) {} 
 
-  async checkEmailPassword(email: string, password: string) {
-    const userExists: any = await this.prisma.user.findUnique({ where: { email } });
+  async checkEmailPassword(email: string, password: string) { 
+    const userExists = await this.prisma.user.findUnique({ where: { email } }); 
     
-    const isMatch = await Crypt.compare(password, userExists?.hashedPassword);
+    if (!userExists) { 
+      throw new UnauthorizedException("Email or password is incorrect"); 
+    } 
 
-    if (!userExists || !isMatch) {
-      throw new UnauthorizedException("Email or password is incorrect");
-    }
+    const isMatch = await Crypt.compare(password, userExists.hashedPassword); 
+    if (!isMatch) { 
+      throw new UnauthorizedException("Email or password is incorrect"); 
+    } 
 
-    const modelExists = await (this.prisma as any)[this.model].findUnique({ 
-      where: { id: userExists.id } 
-    });
+    const modelService = (this.prisma as any)[this.model]; 
 
-    if (!modelExists) {
-      throw new ConflictException("You don't have permissions for this sub-system");
-    }
+    if (!modelService) { 
+      throw new ConflictException("Configuration error"); 
+    } 
 
-    return {
-      sub: userExists.id,
-      role: modelExists.role,
+    const modelExists = await modelService.findUnique({ where: { id: userExists.id } });
+
+    if (!modelExists) { 
+      throw new ForbiddenException("You don't have permissions for this sub-system"); 
+    } 
+
+    return { 
+      sub: userExists.id, 
+      role: modelExists.role, 
       status: modelExists.status 
-    };
-  }
+    }; 
+  } 
 
-  async signIn(dto: SignInDto) {
-    const payload = await this.checkEmailPassword(dto.email, dto.password);
+  async signIn(dto: SignInDto, res: Response) { 
+    const payload = await this.checkEmailPassword(dto.email, dto.password); 
     
-    return {
-      userId: payload.sub,
-      role: payload.role,
-    };
+    const accessToken = await Token.accessToken(payload); 
+    const refreshToken = await Token.refreshToken(payload); 
+    
+    res.cookie('refreshToken', refreshToken, { 
+      httpOnly: true, 
+      sameSite: 'lax', 
+      secure: process.env.NODE_ENV === 'production', 
+      maxAge: 7 * 24 * 60 * 60 * 1000 
+    }); 
+
+    return { accessToken }; 
   } 
 }
