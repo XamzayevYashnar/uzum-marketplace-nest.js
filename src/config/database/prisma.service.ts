@@ -27,29 +27,8 @@ export class PrismaService
   }
 
   async onModuleInit(): Promise<void> {
-    await this.$connect();
-    this.logger.log('Database connected');
-
-    const isSuperAdmin = await this.admin.findFirst({
-      where: {
-        role: Roles.SUPERADMIN,
-      },
-    });
-    if (!isSuperAdmin) {
-      const user = await this.user.create({
-        data: {
-          phone: env.SUPERADMIN.PHONE,
-          hashedPassword: await Crypt.hash(env.SUPERADMIN.PASSWORD),
-        },
-      });
-      await this.admin.create({
-        data: {
-          userId: user.id,
-          role: Roles.SUPERADMIN,
-        },
-      });
-      console.log('Super admin created');
-    }
+    await this.#connect()
+    this.logger.log("Database connected")
   }
 
   async onModuleDestroy(): Promise<void> {
