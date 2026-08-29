@@ -10,12 +10,14 @@ import { Crypt } from "../../infrastructure/lib/Crypt";
 import { Token } from "../../infrastructure/lib/Token"; 
 import type { Response } from "express"; 
 import type { AllowedModels } from "../enum";
+import { MailService } from "../../modules/mail/mail.service";
 
 @Injectable() 
 export class AuthService { 
   constructor( 
     protected readonly prisma: PrismaService, 
-    protected readonly model: AllowedModels, 
+    protected readonly model: AllowedModels,
+    private readonly mail: MailService 
   ) {} 
 
   async checkEmailPassword(email: string, password: string) { 
@@ -26,6 +28,7 @@ export class AuthService {
     } 
 
     const isMatch = await Crypt.compare(password, userExists.hashedPassword); 
+
     if (!isMatch) { 
       throw new UnauthorizedException("Email or password is incorrect"); 
     } 
@@ -64,4 +67,6 @@ export class AuthService {
 
     return { accessToken }; 
   } 
+
+  async verifyOtp(dto: ){}
 }

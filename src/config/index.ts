@@ -37,4 +37,13 @@ export const env = {
             REFRESH_TOKEN_TIME: duration("REFRESH_TOKEN_TIME", "7d"),
         },
     },
+
+    REDIS: {
+        host: process.env.REDIS_HOST,
+        port: process.env.REDIS_PORT,
+    },
+
+    RESEND: {
+        RESEND_API_KEY: process.env.RESEND_API_KEY
+    }
 };
