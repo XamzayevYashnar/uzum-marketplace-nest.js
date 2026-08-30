@@ -13,6 +13,8 @@ import type { Response } from "express";
 import type { AllowedModels } from "../enum";
 import { MailService } from "../../modules/mail/mail.service";
 import { VerifyOtpDto } from "../types/verify-otp-dto";
+import { SignUpDto } from "../types/sign-up-dto";
+import { Roles } from "../../../generated/prisma/enums";
 
 @Injectable() 
 export class AuthService { 
@@ -41,7 +43,7 @@ export class AuthService {
       throw new ConflictException("Configuration error"); 
     } 
 
-    const modelExists = await modelService.findUnique({ where: { id: userExists.id } });
+    const modelExists = await modelService.findUnique({ where: { userId: userExists.id } });
 
     if (!modelExists) { 
       throw new ForbiddenException("You don't have permissions for this sub-system"); 
@@ -77,7 +79,7 @@ export class AuthService {
       throw new ConflictException("Configuration error"); 
     } 
 
-    const modelExists = await modelService.findUnique({ where: { id: userExists.id } });
+    const modelExists = await modelService.findUnique({ where: { userId: userExists.id } });
 
     if (!modelExists) { 
       throw new ForbiddenException("You don't have permissions for this sub-system"); 
@@ -86,7 +88,7 @@ export class AuthService {
     const payload = {
       sub: modelExists.userId,
       role: modelExists.role,
-      status: modelExists.role,
+      status: modelExists.status,
     }
 
     const accessToken = await Token.accessToken(payload); 
@@ -100,5 +102,50 @@ export class AuthService {
     }); 
 
     return { accessToken }; 
+  }
+
+  async isDuplicateEmail(email: string): Promise<void>{
+    const userExists = await this.prisma.user.findUnique({ where: { email: email } });
+
+    if (userExists){
+      throw new ConflictException("This email is already exists");
+    }
+  }
+
+  async signUp(dto: SignUpDto){
+    await this.isDuplicateEmail(dto.email);
+
+    const { password, ...res } = dto;
+
+    const hashedPassword = await Crypt.hash(password);
+
+    const newUser = await this.prisma.user.create({
+      data: {
+        ...res,
+        hashedPassword
+      }
+    });
+
+    const modelService = (this.prisma as any)[this.model]; 
+
+    if (!modelService) { 
+      throw new ConflictException("Configuration error"); 
+    } 
+
+    const modelExists = await modelService.create({
+      data: {
+        userId: newUser.id,
+        role: Roles?.[this.model.toUpperCase()],
+      }
+    });
+
+    if (!modelExists) { 
+      throw new ForbiddenException("You don't have permissions for this sub-system"); 
+    } 
+
+    return {
+      status: "User is success created, please loginIn!"
+    }
+
   }
 }
