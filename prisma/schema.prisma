@@ -47,7 +47,7 @@ model Admin {
 
 model Seller { 
   id     Int    @id @default(autoincrement())
-  status Status @default(PENDING)
+  status Status @default(ACTIVE)
   role   Roles  @default(SELLER)
   userId Int    @unique
   user   User   @relation(fields: [userId], references: [id])
@@ -55,7 +55,7 @@ model Seller {
 
 model Client {
   id     Int    @id @default(autoincrement())
-  status Status @default(PENDING)
+  status Status @default(ACTIVE)
   role   Roles  @default(CLIENT)
   userId Int    @unique
   user   User   @relation(fields: [userId], references: [id])

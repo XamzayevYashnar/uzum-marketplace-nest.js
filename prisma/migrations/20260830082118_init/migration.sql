@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "Client" ALTER COLUMN "status" SET DEFAULT 'ACTIVE';
+
+-- AlterTable
+ALTER TABLE "Seller" ALTER COLUMN "status" SET DEFAULT 'ACTIVE';

@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Res } from "@nestjs/common";
+import { Body, Controller, Get, Post, Res } from "@nestjs/common";
 import { AdminService } from "./admin.service";
 import { SignInDto } from "../../common/types/sign-in-dto";
 import type { Response } from "express";
@@ -18,5 +18,10 @@ export class AdminController {
     @Post('verify/otp')
     verifyOtp(@Body() dto: VerifyOtpDto, @Res({ passthrough: true }) res: Response){
         return this.adminService.verifyOtp(dto, res)
+    }
+
+    @Get('users')
+    getAllUsers(){
+        return this.adminService.getAllUsers()
     }
 }

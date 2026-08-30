@@ -3,6 +3,7 @@ import { ClientService } from "./client.service";
 import { SignInDto } from "../../common/types/sign-in-dto";
 import type { Response } from "express";
 import { VerifyOtpDto } from "../../common/types/verify-otp-dto";
+import { SignUpDto } from "../../common/types/sign-up-dto";
 
 @Controller('client')
 export class ClientController {
@@ -18,5 +19,10 @@ export class ClientController {
     @Post('verify/otp')
     verifyOtp(@Body() dto: VerifyOtpDto, @Res({ passthrough: true }) res: Response){
         return this.clientService.verifyOtp(dto, res)
+    }
+
+    @Post('sign/up')
+    signUp(@Body() dto: SignUpDto){
+        return this.clientService.signUp(dto)
     }
 }
