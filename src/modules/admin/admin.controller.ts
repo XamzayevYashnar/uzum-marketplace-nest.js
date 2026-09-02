@@ -3,6 +3,7 @@ import { AdminService } from "./admin.service";
 import { SignInDto } from "../../common/types/sign-in-dto";
 import type { Response } from "express";
 import { VerifyOtpDto } from "../../common/types/verify-otp-dto";
+import { GetRefreshToken } from "../../common/decorator/getRefreshToken";
 
 @Controller('admin')
 export class AdminController {
@@ -23,5 +24,10 @@ export class AdminController {
     @Get('users')
     getAllUsers(){
         return this.adminService.getAllUsers()
+    }
+
+    @Post('refresh')
+    refreshToken(@GetRefreshToken() token: string){
+        return this.adminService.refreshToken(token)
     }
 }

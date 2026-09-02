@@ -5,6 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AllExceptionsFilter } from './common/filter/all-exception.filter';
+import * as cookieParser from "cookie-parser"; 
 
 export class App {
   static async main() {
@@ -21,12 +22,13 @@ export class App {
     );
 
     app.useGlobalFilters(new AllExceptionsFilter());
-
     app.use(helmet());
+    
+    app.use(cookieParser.default());
 
     app.enableCors({ origin: '*' });
-
     app.setGlobalPrefix(url);
+
     const config = new DocumentBuilder()
       .setTitle('Uzum marketplace production project')
       .setDescription('Marketplace microservice')
@@ -34,12 +36,11 @@ export class App {
       .build();
 
     const documentFactory = () => SwaggerModule.createDocument(app, config);
-    
     SwaggerModule.setup(`${url}/docs`, app, documentFactory);
 
-    app.listen(env.PORT ?? 3050, ()=>{
-      console.log(`Server is running on http://localhost:${env.PORT}/${url}`)
-      console.log(`Swagger is running on http://localhost:${env.PORT}/${url}/docs`)
-    })
+    app.listen(env.PORT ?? 3050, () => {
+      console.log(`Server is running on http://localhost:${env.PORT}/${url}`);
+      console.log(`Swagger is running on http://localhost:${env.PORT}/${url}/docs`);
+    });
   }
 }
