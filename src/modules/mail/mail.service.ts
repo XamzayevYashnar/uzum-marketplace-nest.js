@@ -2,7 +2,7 @@ import { BadRequestException, Inject, Injectable, InternalServerErrorException, 
 import { Resend } from "resend"; 
 import { env } from "../../config"; 
 import { getEmailHtml } from "../../common/public"; 
-import { REDIS_CLIENT } from "../../common/redis/redis.module"; 
+import { REDIS_CLIENT } from "../../config/redis/redis.module"; 
 import Redis from "ioredis"; 
 import { generateOTP } from "../../common/helper/otp-generator"; 
 

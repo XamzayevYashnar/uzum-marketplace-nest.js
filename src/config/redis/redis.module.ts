@@ -1,6 +1,6 @@
 import { Module, Global } from "@nestjs/common";
 import Redis from "ioredis";
-import { env } from "../../config";
+import { env } from "..";
 
 export const REDIS_CLIENT = "REDIS_CLIENT";
 
