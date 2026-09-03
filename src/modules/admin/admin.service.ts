@@ -2,6 +2,9 @@ import { Injectable } from "@nestjs/common";
 import { AuthService } from "../../common/service/base.service";
 import { PrismaService } from "../../config/database/prisma.service";
 import { MailService } from "../../common/mail/mail.service";
+import { CreateAdminDto } from "../../common/types/admin/create-admin-dto";
+import { Crypt } from "../../infrastructure/lib/Crypt";
+import { Roles, Status } from "../../../generated/prisma/enums";
 
 @Injectable() 
 export class AdminService extends AuthService {
@@ -27,6 +30,34 @@ export class AdminService extends AuthService {
 
       return formattedUser;
     });
+  }
+
+  async createAdmin(dto: CreateAdminDto){
+    await this.isDuplicateEmail(dto.email);
+
+    const { password, ...res } = dto;
+
+    const hashedPassword = await Crypt.hash(password);
+
+    const newUser = await this.prisma.user.create({
+      data: {
+        ...res,
+        hashedPassword
+      }
+    });
+
+    await this.prisma.admin.create({
+      data: {
+        userId: newUser.id,
+        role: Roles.ADMIN,
+        status: Status.ACTIVE
+      }
+    });
+
+    return {
+      success: true,
+      message: "Admin is success created"
+    }
   }
   
 }

@@ -1,18 +1,17 @@
-import { BadRequestException, Inject, Injectable, InternalServerErrorException, Logger } from "@nestjs/common"; 
-import { Resend } from "resend"; 
-import { env } from "../../config"; 
+import { BadRequestException, Inject, Injectable, InternalServerErrorException, Logger } from "@nestjs/common";  
 import { getEmailHtml } from "../public"; 
 import { REDIS_CLIENT } from "../../config/redis/redis.module"; 
 import Redis from "ioredis"; 
 import { generateOTP } from "../helper/otp-generator"; 
+import { MailerService } from "@nestjs-modules/mailer";
 
 @Injectable() 
 export class MailService { 
   private readonly logger = new Logger(MailService.name); 
-  private readonly resend = new Resend(env.RESEND.RESEND_API_KEY); 
 
   constructor( 
-    @Inject(REDIS_CLIENT) private readonly redis: Redis, 
+    @Inject(REDIS_CLIENT) private readonly redis: Redis,
+    private readonly mailerService: MailerService 
   ){} 
 
   private getOtpKey(email: string): string { 
@@ -29,25 +28,24 @@ export class MailService {
 
   async sendOtp(to: string) { 
     const cleanEmail = to.toLowerCase().trim();
-    
     const code: any = await this.generateOtpCode(cleanEmail); 
 
-    const { data, error } = await this.resend.emails.send({ 
-      from: "My App <onboarding@resend.dev>", 
-      to: cleanEmail,
-      subject: `${code} - tasdiqlash kodi`, 
-      html: getEmailHtml(code) 
-    }); 
+    try {
+      const info = await this.mailerService.sendMail({ 
+        from: '"My App" <xamzayevyashnar060@gmail.com>', 
+        to: cleanEmail,
+        subject: `${code} - tasdiqlash kodi`, 
+        html: getEmailHtml(code) 
+      }); 
 
-    if (error) { 
+      return { success: true, messageId: info.messageId }; 
+    } catch (error) {
       const key = this.getOtpKey(cleanEmail);
       await this.redis.del(key); 
       
-      this.logger.error('Emailga OTP code yuborilmadi', error); 
+      this.logger.error('Emailga OTP kod yuborilmadi', error); 
       throw new InternalServerErrorException('Kod yuborilishida xatolik yuz berdi'); 
-    } 
-
-    return data; 
+    }
   } 
 
   async verifyOtp(to: string, code: string) { 
@@ -55,11 +53,11 @@ export class MailService {
     const stored = await this.redis.get(key); 
 
     if (!stored) { 
-      throw new BadRequestException('Email is not found, please send code before continue ot code is expired'); 
+      throw new BadRequestException('Email topilmadi, kod muddati tugagan yoki avval so‘ralmagan'); 
     } 
 
-    if (stored !== code) { 
-      throw new BadRequestException('Incorrect code'); 
+    if (stored !== code.trim()) { 
+      throw new BadRequestException('Noto‘g‘ri kod kiritildi'); 
     } 
 
     await this.redis.del(key); 

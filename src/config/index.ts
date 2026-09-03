@@ -45,5 +45,14 @@ export const env = {
 
     RESEND: {
         RESEND_API_KEY: process.env.RESEND_API_KEY
-    }
+    },
+
+    TRANSPORT: {
+        host: process.env.MAIL_HOST,
+        PORT: process.env.MAIL_PORT,
+        AUTH: {
+            user: process.env.MAIL_EMAIL,
+            password: process.env.MAIL_PASSWORD,
+        },
+    },
 };
