@@ -11,7 +11,7 @@ import { Crypt } from "../../infrastructure/lib/Crypt";
 import { Token } from "../../infrastructure/lib/Token"; 
 import type { Response } from "express"; 
 import type { AllowedModels } from "../enum"; 
-import { MailService } from "../../modules/mail/mail.service"; 
+import { MailService } from "../mail/mail.service"; 
 import { VerifyOtpDto } from "../types/verify-otp-dto"; 
 import { SignUpDto } from "../types/sign-up-dto"; 
 import { Roles } from "../../../generated/prisma/enums"; 
