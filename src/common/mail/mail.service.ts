@@ -55,7 +55,7 @@ export class MailService {
     const stored = await this.redis.get(key); 
 
     if (!stored) { 
-      throw new BadRequestException('Email is not found, please send code before continue'); 
+      throw new BadRequestException('Email is not found, please send code before continue ot code is expired'); 
     } 
 
     if (stored !== code) { 
