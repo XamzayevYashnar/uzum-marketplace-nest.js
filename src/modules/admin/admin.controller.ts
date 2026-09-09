@@ -36,8 +36,8 @@ export class AdminController {
         return this.adminService.refreshToken(token)
     }
 
-    @UseGuards(JwtAuthGuard, RolesGuard)
     @AccessRoles(Roles.SUPER_ADMIN)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @Post('create/admin')
     async createAdmin(@Body() dto: CreateAdminDto){
         return this.adminService.createAdmin(dto)
