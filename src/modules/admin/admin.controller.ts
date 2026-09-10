@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Res, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { AdminService } from "./admin.service";
 import { SignInDto } from "../../common/types/auth/sign-in-dto";
 import type { Response } from "express";
@@ -11,6 +11,8 @@ import { AccessRoles } from "../../common/decorator/roles.decorator";
 import { Roles } from "../../../generated/prisma/enums";
 import { ParseIntPipe } from "@nestjs/common";
 import { JwtParamGuard } from "../../common/guards/jwt.param.guard";
+import { FileInterceptor } from "@nestjs/platform-express"; 
+import "multer"
 
 @Controller('admin')
 export class AdminController {
@@ -41,8 +43,12 @@ export class AdminController {
     @AccessRoles(Roles.SUPER_ADMIN)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Post('create')
-    async createAdmin(@Body() dto: CreateAdminDto){
-        return this.adminService.createAdmin(dto);
+    @UseInterceptors(FileInterceptor('avatar')) 
+    async createAdmin(
+        @Body() dto: CreateAdminDto, 
+        @UploadedFile() file: Express.Multer.File 
+    ){
+        return this.adminService.createAdmin(dto, file); 
     }
 
     @Get(':id')

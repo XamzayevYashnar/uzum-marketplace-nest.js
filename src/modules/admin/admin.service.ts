@@ -7,6 +7,7 @@ import { Crypt } from "../../infrastructure/lib/Crypt";
 import { Roles, Status } from "../../../generated/prisma/enums";
 import { JwtAuthGuard } from "../../common/guards/jwt.auth.guard";
 import { RolesGuard } from "../../common/guards/jwt.role.guard";
+import { uploadFile } from "../../infrastructure/lib/Upload";
 
 @Injectable() 
 export class AdminService extends AuthService {
@@ -34,17 +35,30 @@ export class AdminService extends AuthService {
     });
   }
 
-  async createAdmin(dto: CreateAdminDto){
+  async createAdmin(dto: CreateAdminDto, file?: any){
     await this.isDuplicateEmail(dto.email);
 
     const { password, ...res } = dto;
 
     const hashedPassword = await Crypt.hash(password);
 
+    let uploadImageUrl = dto.imageUrl;
+
+    if (file){
+      const uploadResult = await uploadFile(file);
+
+      if (uploadResult.success || uploadResult.url){
+        uploadImageUrl = uploadResult.url;
+      } else {
+        throw new Error("Can't save avatar");
+      }
+    }
+
     const newUser = await this.prisma.user.create({
       data: {
         ...res,
-        hashedPassword
+        hashedPassword,
+        imageUrl: uploadImageUrl,
       }
     });
 
