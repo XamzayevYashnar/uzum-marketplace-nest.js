@@ -1,8 +1,8 @@
 import { Body, Controller, Post, Res } from "@nestjs/common";
-import { SignInDto } from "../../common/types/sign-in-dto";
+import { SignInDto } from "../../common/types/auth/sign-in-dto";
 import type { Response } from "express";
-import { VerifyOtpDto } from "../../common/types/verify-otp-dto";
-import { SignUpDto } from "../../common/types/sign-up-dto";
+import { VerifyOtpDto } from "../../common/types/auth/verify-otp-dto";
+import { SignUpDto } from "../../common/types/auth/sign-up-dto";
 import { SellerService } from "./seller.service";
 import { GetRefreshToken } from "../../common/decorator/getRefreshToken";
 

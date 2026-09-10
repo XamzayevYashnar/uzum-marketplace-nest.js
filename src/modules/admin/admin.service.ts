@@ -1,10 +1,12 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, UseGuards } from "@nestjs/common";
 import { AuthService } from "../../common/service/base.service";
 import { PrismaService } from "../../config/database/prisma.service";
 import { MailService } from "../../common/mail/mail.service";
 import { CreateAdminDto } from "../../common/types/admin/create-admin-dto";
 import { Crypt } from "../../infrastructure/lib/Crypt";
 import { Roles, Status } from "../../../generated/prisma/enums";
+import { JwtAuthGuard } from "../../common/guards/jwt.auth.guard";
+import { RolesGuard } from "../../common/guards/jwt.role.guard";
 
 @Injectable() 
 export class AdminService extends AuthService {
@@ -58,6 +60,12 @@ export class AdminService extends AuthService {
       success: true,
       message: "Admin is success created"
     }
+  }
+
+  async findOneUser(id: number){
+    return await this.prisma.user.findUnique({
+      where: { id: id }
+    } as any)
   }
   
 }

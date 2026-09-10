@@ -9,12 +9,12 @@ export class RolesGuard implements CanActivate {
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const requireRoles = this.reflector.getAllAndOverride('roles', [context.getHandler(), context.getClass()])
 
+        const req = context.switchToHttp().getRequest();
+        const user = req.user;
+
         if (!requireRoles){
             return true;
         }
-
-        const req = context.switchToHttp().getRequest();
-        const user = req.user;
 
         if (!user){
             throw new ForbiddenException("User is not found");

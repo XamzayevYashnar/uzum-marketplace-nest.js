@@ -6,14 +6,14 @@ import {
   BadRequestException 
 } from "@nestjs/common"; 
 import { PrismaService } from "../../config/database/prisma.service"; 
-import { SignInDto } from "../types/sign-in-dto"; 
+import { SignInDto } from "../types/auth/sign-in-dto"; 
 import { Crypt } from "../../infrastructure/lib/Crypt"; 
 import { Token } from "../../infrastructure/lib/Token"; 
 import type { Response } from "express"; 
 import type { AllowedModels } from "../enum"; 
 import { MailService } from "../mail/mail.service"; 
-import { VerifyOtpDto } from "../types/verify-otp-dto"; 
-import { SignUpDto } from "../types/sign-up-dto"; 
+import { VerifyOtpDto } from "../types/auth/verify-otp-dto"; 
+import { SignUpDto } from "../types/auth/sign-up-dto"; 
 import { Roles } from "../../../generated/prisma/enums"; 
 
 @Injectable() 
@@ -77,7 +77,7 @@ export class AuthService {
     const modelExists = await this.validateModelAccess(userExists.id);
 
     const payload = { 
-      sub: modelExists.userId, 
+      sub: modelExists.id, 
       role: modelExists.role, 
       status: modelExists.status, 
     }; 
