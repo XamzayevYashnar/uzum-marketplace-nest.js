@@ -20,13 +20,13 @@ export class RolesGuard implements CanActivate {
         const user = req.user; 
 
         if (!user) {
-            throw new UnauthorizedException("Аутентификациядан ўтилмаган (User нот фаунд)");
+            throw new UnauthorizedException("User is not found");
         }
 
         const hasRole = requireRoles.includes(user.role);
 
         if (!hasRole) {
-            throw new ForbiddenException("Бу амални бажариш учун сизда етарли ҳуқуқлар йўқ");
+            throw new ForbiddenException("You do not have permission to access this resource");
         }
 
         return true;

@@ -2,7 +2,6 @@ import {
   ConflictException, 
   Injectable, 
   UnauthorizedException, 
-  ForbiddenException, 
   BadRequestException 
 } from "@nestjs/common"; 
 import { PrismaService } from "../../config/database/prisma.service"; 
@@ -15,44 +14,16 @@ import { MailService } from "../mail/mail.service";
 import { VerifyOtpDto } from "../types/auth/verify-otp-dto"; 
 import { SignUpDto } from "../types/auth/sign-up-dto"; 
 import { Roles } from "../../../generated/prisma/enums"; 
+import { MainService } from "./main.service";
 
 @Injectable() 
-export class AuthService { 
+export class AuthService extends MainService { 
   constructor( 
     protected readonly prisma: PrismaService, 
     protected readonly model: AllowedModels, 
     private readonly mail: MailService 
-  ) {} 
-
-  private async validateModelAccess(userId: string) {
-    const modelService = (this.prisma as any)[this.model]; 
-    if (!modelService) { 
-      throw new ConflictException("Tizim konfiguratsiyasida xatolik: model topilmadi"); 
-    } 
-
-    const modelExists = await modelService.findUnique({ where: { userId } }); 
-    
-    if (!modelExists) { 
-      throw new ForbiddenException("Sizda ushbu quyi tizimga kirish ruxsati yo'q"); 
-    } 
-
-    return modelExists;
-  }
-
-  async checkEmailPassword(email: string, password: string) { 
-    const userExists: any = await this.prisma.user.findUnique({ where: { email } }); 
-    if (!userExists) { 
-      throw new UnauthorizedException("Email yoki parol noto'g'ri"); 
-    } 
-
-    const isMatch = await Crypt.compare(password, userExists.hashedPassword); 
-    if (!isMatch) { 
-      throw new UnauthorizedException("Email yoki parol noto'g'ri"); 
-    } 
-
-    await this.validateModelAccess(userExists.id);
-
-    return userExists; 
+  ) {
+    super(prisma, model)
   } 
 
   async signIn(dto: SignInDto) { 
@@ -64,6 +35,34 @@ export class AuthService {
       email: user.email, 
       step: 'OTP_REQUIRED', 
     }; 
+  } 
+  
+  async signUp(dto: SignUpDto) { 
+    await this.isDuplicateEmail(dto.email); 
+
+    const { password, ...res } = dto; 
+    const hashedPassword = await Crypt.hash(password); 
+
+    const newUser = await this.prisma.user.create({ 
+      data: { ...res, hashedPassword } 
+    }); 
+
+    const modelService = (this.prisma as any)[this.model]; 
+    
+    if (!modelService) { 
+      throw new ConflictException("Tizim konfiguratsiyasida xatolik"); 
+    } 
+
+    const roleKey = this.model.toUpperCase() as keyof typeof Roles;
+
+    await modelService.create({ 
+      data: { 
+        userId: newUser.id, 
+        role: Roles?.[roleKey], 
+      } 
+    }); 
+
+    return { status: "User is success created, please loginIn!" }; 
   } 
 
   async verifyOtp(dto: VerifyOtpDto, res: Response) { 
@@ -103,40 +102,6 @@ export class AuthService {
       success: true,
       message: "Tokens is success created"
      }; 
-  } 
-
-  async isDuplicateEmail(email: string): Promise<void> { 
-    const userExists = await this.prisma.user.findUnique({ where: { email } }); 
-    if (userExists) { 
-      throw new ConflictException("Ushbu email allaqachon ro'yxatdan o'tgan"); 
-    } 
-  } 
-
-  async signUp(dto: SignUpDto) { 
-    await this.isDuplicateEmail(dto.email); 
-
-    const { password, ...res } = dto; 
-    const hashedPassword = await Crypt.hash(password); 
-
-    const newUser = await this.prisma.user.create({ 
-      data: { ...res, hashedPassword } 
-    }); 
-
-    const modelService = (this.prisma as any)[this.model]; 
-    if (!modelService) { 
-      throw new ConflictException("Tizim konfiguratsiyasida xatolik"); 
-    } 
-
-    const roleKey = this.model.toUpperCase() as keyof typeof Roles;
-
-    await modelService.create({ 
-      data: { 
-        userId: newUser.id, 
-        role: Roles?.[roleKey], 
-      } 
-    }); 
-
-    return { status: "User is success created, please loginIn!" }; 
   } 
 
   async refreshToken(token: string) { 
