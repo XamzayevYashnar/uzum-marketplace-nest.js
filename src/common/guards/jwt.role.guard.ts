@@ -1,4 +1,4 @@
-import { ExecutionContext, CanActivate, ForbiddenException, Injectable } from "@nestjs/common";
+import { ExecutionContext, CanActivate, ForbiddenException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 
 @Injectable()   
@@ -6,24 +6,27 @@ export class RolesGuard implements CanActivate {
 
     constructor (private readonly reflector: Reflector){}
 
-    async canActivate(context: ExecutionContext): Promise<boolean> {
-        const requireRoles = this.reflector.getAllAndOverride('roles', [context.getHandler(), context.getClass()])
+    canActivate(context: ExecutionContext): boolean {
+        const requireRoles = this.reflector.getAllAndOverride<string[]>('roles', [
+            context.getHandler(), 
+            context.getClass()
+        ]);
 
-        const req = context.switchToHttp().getRequest();
-        const user = req.user;
-
-        if (!requireRoles){
+        if (!requireRoles) {
             return true;
         }
 
-        if (!user){
-            throw new ForbiddenException("User is not found");
+        const req = context.switchToHttp().getRequest();
+        const user = req.user; 
+
+        if (!user) {
+            throw new UnauthorizedException("Аутентификациядан ўтилмаган (User нот фаунд)");
         }
 
         const hasRole = requireRoles.includes(user.role);
 
-        if (!hasRole){
-            throw new ForbiddenException("User hasn't got permissions");
+        if (!hasRole) {
+            throw new ForbiddenException("Бу амални бажариш учун сизда етарли ҳуқуқлар йўқ");
         }
 
         return true;
