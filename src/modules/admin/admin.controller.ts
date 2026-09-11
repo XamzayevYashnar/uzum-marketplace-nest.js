@@ -13,6 +13,7 @@ import { ParseIntPipe } from "@nestjs/common";
 import { JwtParamGuard } from "../../common/guards/jwt.param.guard";
 import { FileInterceptor } from "@nestjs/platform-express"; 
 import "multer"
+import { ImageValidationPipe } from "../../common/pipe/image.validation.pipe";
 
 @Controller('admin')
 export class AdminController {
@@ -48,7 +49,7 @@ export class AdminController {
     @UseInterceptors(FileInterceptor('avatar')) 
     async createAdmin(
         @Body() dto: CreateAdminDto, 
-        @UploadedFile() file: Express.Multer.File 
+        @UploadedFile(new ImageValidationPipe()) file: Express.Multer.File 
     ){
         return this.adminService.createAdmin(dto, file); 
     }
