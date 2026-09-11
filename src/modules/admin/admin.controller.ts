@@ -31,6 +31,8 @@ export class AdminController {
     }
 
     @Get()
+    @AccessRoles(Roles.SUPER_ADMIN)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     getAllUsers(){
         return this.adminService.getAllUsers();
     }   

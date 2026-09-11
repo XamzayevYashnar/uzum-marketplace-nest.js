@@ -5,8 +5,6 @@ import { MailService } from "../../common/mail/mail.service";
 import { CreateAdminDto } from "../../common/types/admin/create-admin-dto";
 import { Crypt } from "../../infrastructure/lib/Crypt";
 import { Roles, Status } from "../../../generated/prisma/enums";
-import { JwtAuthGuard } from "../../common/guards/jwt.auth.guard";
-import { RolesGuard } from "../../common/guards/jwt.role.guard";
 import { uploadFile } from "../../infrastructure/lib/Upload";
 
 @Injectable() 
