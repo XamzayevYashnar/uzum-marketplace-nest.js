@@ -33,6 +33,7 @@ export class App {
       .setTitle('Uzum marketplace production project')
       .setDescription('Marketplace microservice')
       .setVersion('1.0')
+      .addBearerAuth()
       .build();
 
     const documentFactory = () => SwaggerModule.createDocument(app, config);

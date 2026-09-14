@@ -5,14 +5,14 @@ import {
   BadRequestException 
 } from "@nestjs/common"; 
 import { PrismaService } from "../../config/database/prisma.service"; 
-import { SignInDto } from "../types/auth/sign-in-dto"; 
+import { SignInDto } from "../dto/auth/sign-in-dto"; 
 import { Crypt } from "../../infrastructure/lib/Crypt"; 
 import { Token } from "../../infrastructure/lib/Token"; 
 import type { Response } from "express"; 
 import type { AllowedModels } from "../enum"; 
 import { MailService } from "../mail/mail.service"; 
-import { VerifyOtpDto } from "../types/auth/verify-otp-dto"; 
-import { SignUpDto } from "../types/auth/sign-up-dto"; 
+import { VerifyOtpDto } from "../dto/auth/verify-otp-dto"; 
+import { SignUpDto } from "../dto/auth/sign-up-dto"; 
 import { Roles } from "../../../generated/prisma/enums"; 
 import { MainService } from "./main.service";
 

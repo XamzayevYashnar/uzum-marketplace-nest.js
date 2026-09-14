@@ -1,9 +1,9 @@
 import { Body, Controller, Post, Res } from "@nestjs/common";
 import { ClientService } from "./client.service";
-import { SignInDto } from "../../common/types/auth/sign-in-dto";
+import { SignInDto } from "../../common/dto/auth/sign-in-dto";
 import type { Response } from "express";
-import { VerifyOtpDto } from "../../common/types/auth/verify-otp-dto";
-import { SignUpDto } from "../../common/types/auth/sign-up-dto";
+import { VerifyOtpDto } from "../../common/dto/auth/verify-otp-dto";
+import { SignUpDto } from "../../common/dto/auth/sign-up-dto";
 import { GetRefreshToken } from "../../common/decorator/getRefreshToken";
 
 @Controller('client')

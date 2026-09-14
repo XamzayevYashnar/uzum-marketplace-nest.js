@@ -7,7 +7,7 @@ export class ImageValidationPipe implements PipeTransform {
 
   transform(value: Express.Multer.File) {
     if (!value) {
-      throw new BadRequestException("Fayl tanlanmadi");
+      return
     }
 
     const fileExtension = extname(value.originalname).toLowerCase().slice(1);
