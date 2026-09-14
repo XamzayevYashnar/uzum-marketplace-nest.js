@@ -6,6 +6,7 @@ import { CreateAdminDto } from "../../common/dto/admin/create-admin-dto";
 import { Crypt } from "../../infrastructure/lib/Crypt";
 import { Roles, Status } from "../../../generated/prisma/enums";
 import { uploadFile } from "../../infrastructure/lib/Upload";
+import { UpdateAdminDto } from "../../common/dto/admin/update-admin-dto";
 
 @Injectable() 
 export class AdminService extends AuthService {
@@ -80,5 +81,5 @@ export class AdminService extends AuthService {
     } as any)
   }
 
-  async update(){}
+  async update(dto: UpdateAdminDto, file: any){}
 }
