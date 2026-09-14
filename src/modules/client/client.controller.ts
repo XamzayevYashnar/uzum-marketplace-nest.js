@@ -4,7 +4,7 @@ import { SignInDto } from "../../common/dto/auth/sign-in-dto";
 import type { Response } from "express";
 import { VerifyOtpDto } from "../../common/dto/auth/verify-otp-dto";
 import { SignUpDto } from "../../common/dto/auth/sign-up-dto";
-import { GetRefreshToken } from "../../common/decorator/getRefreshToken";
+import { GetRefreshToken } from "../../common/decorator/custom/getRefreshToken";
 
 @Controller('client')
 export class ClientController {
