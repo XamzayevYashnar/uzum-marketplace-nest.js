@@ -32,6 +32,8 @@ model User {
   admins         Admin[]
   sellers        Seller[] 
   clients        Client[] 
+
+  sessions       Session[]
   
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -59,4 +61,20 @@ model Client {
   role   Roles  @default(CLIENT)
   userId Int    @unique
   user   User   @relation(fields: [userId], references: [id])
+}
+
+model Session {
+  id Int @id @default(autoincrement())
+  userId Int
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  ipAddress String?
+  deviceType String?
+  os String?
+  browser String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
 }

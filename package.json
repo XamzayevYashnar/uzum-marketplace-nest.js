@@ -32,6 +32,7 @@
     "@types/cookie-parser": "^1.4.10",
     "@types/nodemailer": "^8.0.1",
     "@types/passport": "^1.0.17",
+    "@types/ua-parser-js": "^0.7.39",
     "bcrypt": "^6.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
@@ -44,7 +45,8 @@
     "prisma": "^7.9.1",
     "reflect-metadata": "^0.2.2",
     "resend": "^6.24.0",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "ua-parser-js": "^2.0.10"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",

@@ -1,4 +1,4 @@
-import { Injectable, UseGuards } from "@nestjs/common";
+import { Injectable, NotFoundException, UseGuards } from "@nestjs/common";
 import { AuthService } from "../../common/service/base.service";
 import { PrismaService } from "../../config/database/prisma.service";
 import { MailService } from "../../common/mail/mail.service";
@@ -20,6 +20,7 @@ export class AdminService extends AuthService {
         admins: true,
         sellers: true,
         clients: true,
+        sessions: true,
       },
     });
 
@@ -82,4 +83,19 @@ export class AdminService extends AuthService {
   }
 
   async update(dto: UpdateAdminDto, file: any){}
+
+  async deleteSession(id: number) {
+  const session = await this.prisma.session.findUnique({
+    where: { id }
+  });
+
+  if (!session) {
+    throw new NotFoundException("This session is not found"); 
+  }
+
+  return this.prisma.session.delete({
+    where: { id }
+  });
+}
+
 }

@@ -1,10 +1,11 @@
-import { Body, Controller, Post, Res } from "@nestjs/common";
+import { Body, Controller, Ip, Post, Req, Res } from "@nestjs/common";
 import { ClientService } from "./client.service";
 import { SignInDto } from "../../common/dto/auth/sign-in-dto";
 import type { Response } from "express";
 import { VerifyOtpDto } from "../../common/dto/auth/verify-otp-dto";
 import { SignUpDto } from "../../common/dto/auth/sign-up-dto";
 import { GetRefreshToken } from "../../common/decorator/custom/getRefreshToken";
+import type { Request } from "express"
 
 @Controller('client')
 export class ClientController {
@@ -18,8 +19,8 @@ export class ClientController {
     }
 
     @Post('verify/otp')
-    verifyOtp(@Body() dto: VerifyOtpDto, @Res({ passthrough: true }) res: Response){
-        return this.clientService.verifyOtp(dto, res)
+    verifyOtp(@Body() dto: VerifyOtpDto, @Res({ passthrough: true }) res: Response, @Req() req: Request, @Ip() ip: any){
+        return this.clientService.verifyOtp(dto, res, req, ip);
     }
 
     @Post('sign/up')
