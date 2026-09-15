@@ -10,7 +10,9 @@ import {
   UseGuards, 
   UseInterceptors, 
   ParseIntPipe, 
-  Ip
+  Ip,
+  Delete,
+  HttpCode
 } from "@nestjs/common"; 
 import { AdminService } from "./admin.service"; 
 import { SignInDto } from "../../common/dto/auth/sign-in-dto"; 
@@ -123,8 +125,8 @@ export class AdminController {
     return this.adminService.update(dto, file); 
   } 
 
-  @Get("delete/session:id")
-  deleteSession(@Param("id", ParseIntPipe) id: number){
+  @Delete("session/:id")
+  deleteSession(@Param("id", ParseIntPipe) id: number) {
     return this.adminService.deleteSession(id);
   }
 }
