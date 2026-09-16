@@ -85,17 +85,17 @@ export class AdminService extends AuthService {
   async update(dto: UpdateAdminDto, file: any){}
 
   async deleteSession(id: number) {
-  const session = await this.prisma.session.findUnique({
-    where: { id }
-  });
+    const session = await this.prisma.session.findUnique({
+      where: { id }
+    });
 
-  if (!session) {
-    throw new NotFoundException("This session is not found"); 
+    if (!session) {
+      throw new NotFoundException("This session is not found"); 
+    }
+
+    return this.prisma.session.delete({
+      where: { id }
+    });
   }
-
-  return this.prisma.session.delete({
-    where: { id }
-  });
-}
 
 }

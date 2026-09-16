@@ -122,19 +122,7 @@ export class AuthService extends MainService {
     const accessToken = await Token.accessToken(payload); 
     const refreshToken = await Token.refreshToken(payload); 
 
-    res.cookie('refreshToken', refreshToken, { 
-      httpOnly: true, 
-      sameSite: 'lax', 
-      secure: process.env.NODE_ENV === 'production', 
-      maxAge: 7 * 24 * 60 * 60 * 1000 
-    }); 
-
-    res.cookie('accessToken', accessToken, { 
-      httpOnly: true, 
-      sameSite: 'lax', 
-      secure: process.env.NODE_ENV === 'production', 
-      maxAge: 15 * 60 * 1000
-    }); 
+    Token.setCookie(res, refreshToken, accessToken);
 
     return { 
       success: true,
