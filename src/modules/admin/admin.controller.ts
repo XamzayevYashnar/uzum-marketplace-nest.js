@@ -119,12 +119,4 @@ export class AdminController {
   ) { 
     return this.adminService.update(dto, file); 
   } 
-
-  @Delete("session/:id")
-  @ApiCookieAuth()
-  @UseGuards(JwtAuthGuard, RolesGuard, JwtParamGuard)
-  @ApiOperation({ summary: "Delete user session by Session ID" })
-  deleteSession(@Param("id", ParseIntPipe) id: number) {
-    return this.adminService.deleteSession(id);
-  }
 }

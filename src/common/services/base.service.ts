@@ -85,6 +85,7 @@ export class AuthService extends MainService {
     await this.mail.verifyOtp(dto.email, dto.code);
 
     const userExists: any = await this.prisma.user.findUnique({ where: { email: dto.email } }); 
+    
     if (!userExists) { 
       throw new UnauthorizedException("Foydalanuvchi topilmadi"); 
     } 
@@ -142,7 +143,7 @@ export class AuthService extends MainService {
       });
       
       if (!activeSession) {
-        throw new UnauthorizedException("Sessiya muddati tugagan yoki o'chirilgan.");
+        throw new UnauthorizedException("Siz qurilmadan chiqarib yuborilgansiz!");
       }
 
       const existsUser: any = await this.prisma.user.findUnique({ where: { id: payload.sub } }); 
