@@ -98,8 +98,7 @@ export class AdminController {
 
   @Get(':id') 
   @ApiCookieAuth() 
-  @AccessRoles(Roles.SUPER_ADMIN) 
-  @UseGuards(JwtAuthGuard, RolesGuard, JwtParamGuard) 
+  @UseGuards(JwtAuthGuard, JwtParamGuard) 
   @ApiOperation({ summary: "Get single admin by ID" }) 
   @ApiResponse({ status: 200, description: "User exists" }) 
   findOneUser(@Param("id", ParseIntPipe) id: number) { 
