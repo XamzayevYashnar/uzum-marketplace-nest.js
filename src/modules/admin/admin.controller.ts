@@ -1,10 +1,10 @@
 import { Body, Controller, Get, Param, Post, Res, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { AdminService } from "./admin.service";
-import { SignInDto } from "../../common/types/auth/sign-in-dto";
+import { SignInDto } from "../../common/dto/auth/sign-in-dto";
 import type { Response } from "express";
-import { VerifyOtpDto } from "../../common/types/auth/verify-otp-dto";
+import { VerifyOtpDto } from "../../common/dto/auth/verify-otp-dto";
 import { GetRefreshToken } from "../../common/decorator/getRefreshToken";
-import { CreateAdminDto } from "../../common/types/admin/create-admin-dto";
+import { CreateAdminDto } from "../../common/dto/admin/create-admin-dto";
 import { JwtAuthGuard } from "../../common/guards/jwt.auth.guard";
 import { RolesGuard } from "../../common/guards/jwt.role.guard";
 import { AccessRoles } from "../../common/decorator/roles.decorator";
@@ -14,6 +14,7 @@ import { JwtParamGuard } from "../../common/guards/jwt.param.guard";
 import { FileInterceptor } from "@nestjs/platform-express"; 
 import "multer"
 import { ImageValidationPipe } from "../../common/pipe/image.validation.pipe";
+import { UpdateAdminDto } from "../../common/dto/admin/update-admin-dto";
 
 @Controller('admin')
 export class AdminController {
@@ -59,5 +60,14 @@ export class AdminController {
     @UseGuards(JwtAuthGuard, RolesGuard, JwtParamGuard)
     findOneUser(@Param("id", ParseIntPipe) id: number){
         return this.adminService.findOneUser(id);
+    }
+
+    @Post("update")
+    @UseInterceptors()
+    update(
+        @Body() dto: UpdateAdminDto,
+        @UploadedFile() file: Express.Multer.File 
+    ){
+        return this.adminService.update();
     }
 }

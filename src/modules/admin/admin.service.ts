@@ -2,7 +2,7 @@ import { Injectable, UseGuards } from "@nestjs/common";
 import { AuthService } from "../../common/service/base.service";
 import { PrismaService } from "../../config/database/prisma.service";
 import { MailService } from "../../common/mail/mail.service";
-import { CreateAdminDto } from "../../common/types/admin/create-admin-dto";
+import { CreateAdminDto } from "../../common/dto/admin/create-admin-dto";
 import { Crypt } from "../../infrastructure/lib/Crypt";
 import { Roles, Status } from "../../../generated/prisma/enums";
 import { uploadFile } from "../../infrastructure/lib/Upload";
@@ -79,5 +79,6 @@ export class AdminService extends AuthService {
       where: { id: id }
     } as any)
   }
-  
+
+  async update(){}
 }
