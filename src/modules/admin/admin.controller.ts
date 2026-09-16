@@ -11,8 +11,7 @@ import {
   UseInterceptors, 
   ParseIntPipe, 
   Ip,
-  Delete,
-  HttpCode
+  Delete
 } from "@nestjs/common"; 
 import { AdminService } from "./admin.service"; 
 import { SignInDto } from "../../common/dto/auth/sign-in-dto"; 
@@ -46,18 +45,24 @@ export class AdminController {
   @Post('verify/otp') 
   @ApiOperation({ summary: "Verify Email code" }) 
   @ApiResponse({ status: 201, description: "Tokens successfully created" }) 
-  verifyOtp(@Body() dto: VerifyOtpDto, @Res({ passthrough: true }) res: Response,  @Req() req: Request, @Ip() ip: any) { 
+  verifyOtp(
+    @Body() dto: VerifyOtpDto, 
+    @Res({ passthrough: true }) res: Response,  
+    @Req() req: Request, 
+    @Ip() ip: string
+  ) { 
     return this.adminService.verifyOtp(dto, res, req, ip); 
   } 
 
   @Post("sign/out")
-  async signOut(@GetRefreshToken() token: string, @Res({ passthrough: true }) res: Response){
-    res.clearCookie("refreshToken")
-    res.clearCookie("accessToken")
+  @ApiOperation({ summary: "Sign out from system" })
+  async signOut(@GetRefreshToken() token: string, @Res({ passthrough: true }) res: Response) {
+    res.clearCookie("refreshToken");
+    res.clearCookie("accessToken");
 
     await this.adminService.signOut(token);
 
-    return { success: true, message: "Muvaffqiyatli chiqdingiz" }
+    return { success: true, message: "Muvaffqiyatli chiqdingiz" };
   }
 
   @Get() 
@@ -66,8 +71,6 @@ export class AdminController {
   @UseGuards(JwtAuthGuard, RolesGuard) 
   @ApiOperation({ summary: "Get Users List" }) 
   @ApiResponse({ status: 200, description: "Admins List" }) 
-  @ApiResponse({ status: 401, description: "Unauthorized exception" }) 
-  @ApiResponse({ status: 403, description: "Forbidden exception" }) 
   getAllUsers() { 
     return this.adminService.getAllUsers(); 
   } 
@@ -75,9 +78,8 @@ export class AdminController {
   @Post('refresh') 
   @ApiOperation({ summary: "Refresh access token using Refresh Token" }) 
   @ApiResponse({ status: 201, description: "Access token successfully updated" }) 
-  @ApiResponse({ status: 401, description: "Unauthorized, please login before continuing" }) 
-  refreshToken(@GetRefreshToken() token: string) { 
-    return this.adminService.refreshToken(token); 
+  refreshToken(@GetRefreshToken() token: string, @Res({ passthrough: true }) res: Response) { 
+    return this.adminService.refreshToken(token, res); 
   } 
 
   @Post('create') 
@@ -87,8 +89,6 @@ export class AdminController {
   @UseInterceptors(FileInterceptor('avatar')) 
   @ApiOperation({ summary: "Create Admin (SUPER_ADMIN only)" }) 
   @ApiResponse({ status: 201, description: "Admin successfully created" }) 
-  @ApiResponse({ status: 401, description: "Unauthorized exception, please sign in before continuing" }) 
-  @ApiResponse({ status: 403, description: "Forbidden exception, insufficient permissions" }) 
   async createAdmin( 
     @Body() dto: CreateAdminDto, 
     @UploadedFile(new ImageValidationPipe()) file: Express.Multer.File 
@@ -102,9 +102,6 @@ export class AdminController {
   @UseGuards(JwtAuthGuard, RolesGuard, JwtParamGuard) 
   @ApiOperation({ summary: "Get single admin by ID" }) 
   @ApiResponse({ status: 200, description: "User exists" }) 
-  @ApiResponse({ status: 401, description: "Unauthorized exception, please sign in before continuing" }) 
-  @ApiResponse({ status: 403, description: "Forbidden exception" }) 
-  @ApiResponse({ status: 404, description: "User not found" }) 
   findOneUser(@Param("id", ParseIntPipe) id: number) { 
     return this.adminService.findOneUser(id); 
   } 
@@ -116,8 +113,6 @@ export class AdminController {
   @UseInterceptors(FileInterceptor('avatar')) 
   @ApiOperation({ summary: "Update Admin data" }) 
   @ApiResponse({ status: 200, description: "Admin successfully updated" }) 
-  @ApiResponse({ status: 401, description: "Unauthorized exception" }) 
-  @ApiResponse({ status: 403, description: "Forbidden exception" }) 
   update( 
     @Body() dto: UpdateAdminDto, 
     @UploadedFile(new ImageValidationPipe()) file: Express.Multer.File 
@@ -126,6 +121,9 @@ export class AdminController {
   } 
 
   @Delete("session/:id")
+  @ApiCookieAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard, JwtParamGuard)
+  @ApiOperation({ summary: "Delete user session by Session ID" })
   deleteSession(@Param("id", ParseIntPipe) id: number) {
     return this.adminService.deleteSession(id);
   }

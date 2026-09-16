@@ -32,19 +32,24 @@ export class Token {
         });
     }
 
-    static setCookie(res: Response, refreshToken: string, accessToken: string){
-        res.cookie('refreshToken', refreshToken, { 
+    static async setCookie(res: Response, accessToken?: string, refreshToken?: string){
+
+        if (refreshToken){
+            res.cookie('refreshToken', refreshToken, { 
+                httpOnly: true, 
+                sameSite: 'lax', 
+                secure: process.env.NODE_ENV === 'production', 
+                maxAge: 7 * 24 * 60 * 60 * 1000 
+            });
+        }
+
+        if (accessToken){
+            res.cookie('accessToken', accessToken, { 
             httpOnly: true, 
             sameSite: 'lax', 
-            secure: process.env.NODE_ENV === 'production', 
-            maxAge: 7 * 24 * 60 * 60 * 1000 
-        }); 
-
-        res.cookie('accessToken', accessToken, { 
-        httpOnly: true, 
-        sameSite: 'lax', 
-        secure: env.NODE_ENV === 'production', 
-        maxAge: 15 * 60 * 1000
-        }); 
+            secure: env.NODE_ENV === 'production', 
+            maxAge: 15 * 60 * 1000
+            }); 
+        }
     }
 }

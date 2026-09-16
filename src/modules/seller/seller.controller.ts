@@ -29,7 +29,7 @@ export class SellerController {
     }
 
     @Post('refresh')
-    refreshToken(@GetRefreshToken() token: string){
-        return this.sellerService.refreshToken(token)
+    refreshToken(@GetRefreshToken() token: string, @Res({ passthrough: true }) res: Response){
+        return this.sellerService.refreshToken(token, res)
     }
 }

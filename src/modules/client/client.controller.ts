@@ -29,7 +29,7 @@ export class ClientController {
     }
 
     @Post('refresh')
-    refreshToken(@GetRefreshToken() token: string){
-        return this.clientService.refreshToken(token)
+    refreshToken(@GetRefreshToken() token: string, @Res() res: Response){
+        return this.clientService.refreshToken(token, res)
     }
 }
