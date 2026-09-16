@@ -5,6 +5,7 @@ import { AdminController } from "./admin.controller";
 import { AdminService } from "./admin.service";
 import { JwtStrategy } from "../../common/jwt/jwt.strategy";
 import { env } from "../../config";
+import { DeviceService } from "../../common/services/device/device.service";
 
 @Module({
     imports: [
@@ -17,7 +18,7 @@ import { env } from "../../config";
         }),
     ],
     controllers: [AdminController],
-    providers: [AdminService, JwtStrategy],
+    providers: [AdminService, JwtStrategy, DeviceService],
     exports: [AdminService]
 })
 export class AdminModule {}

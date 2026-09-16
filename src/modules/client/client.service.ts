@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { AuthService } from "../../common/service/base.service";
+import { AuthService } from "../../common/services/base.service";
 import { PrismaService } from "../../config/database/prisma.service";
 import { MailService } from "../../common/mail/mail.service";
 
