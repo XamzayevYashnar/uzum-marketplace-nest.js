@@ -29,6 +29,7 @@ import { ImageValidationPipe } from "../../common/pipe/image.validation.pipe";
 import { ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger"; 
 import type { Request, Response } from "express"; 
 import "multer"; 
+import { CurrentUserId } from "../../common/decorator/custom/current-decorator";
 
 @ApiTags('admin') 
 @Controller('admin') 
@@ -96,12 +97,12 @@ export class AdminController {
     return this.adminService.createAdmin(dto, file); 
   } 
 
-  @Get(':id') 
+  @Get('me') 
   @ApiCookieAuth() 
-  @UseGuards(JwtAuthGuard, JwtParamGuard) 
+  @UseGuards(JwtAuthGuard) 
   @ApiOperation({ summary: "Get single admin by ID" }) 
   @ApiResponse({ status: 200, description: "User exists" }) 
-  findOneUser(@Param("id", ParseIntPipe) id: number) { 
+  findOneUser(@CurrentUserId() id: number){ 
     return this.adminService.findOneUser(id); 
   } 
 
