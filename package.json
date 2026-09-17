@@ -33,6 +33,7 @@
     "@types/nodemailer": "^8.0.1",
     "@types/passport": "^1.0.17",
     "@types/ua-parser-js": "^0.7.39",
+    "axios": "^1.20.0",
     "bcrypt": "^6.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
