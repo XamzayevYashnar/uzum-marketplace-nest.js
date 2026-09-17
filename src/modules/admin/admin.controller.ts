@@ -106,17 +106,9 @@ export class AdminController {
     return this.adminService.findOneUser(id); 
   } 
 
-  @Post("update") 
-  @ApiCookieAuth() 
-  @AccessRoles(Roles.SUPER_ADMIN)
-  @UseGuards(JwtAuthGuard, RolesGuard) 
-  @UseInterceptors(FileInterceptor('avatar')) 
-  @ApiOperation({ summary: "Update Admin data" }) 
-  @ApiResponse({ status: 200, description: "Admin successfully updated" }) 
-  update( 
-    @Body() dto: UpdateAdminDto, 
-    @UploadedFile(new ImageValidationPipe()) file: Express.Multer.File 
-  ) { 
-    return this.adminService.update(dto, file); 
-  } 
+  @Post("update")
+  @UseInterceptors(FileInterceptor('avatar'))
+  uploadFile(@UploadedFile(new ImageValidationPipe) file: Express.Multer.File, dto: UpdateAdminDto){
+    return this.adminService.update(dto, file);
+  }
 }

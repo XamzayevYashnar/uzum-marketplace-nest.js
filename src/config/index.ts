@@ -56,5 +56,10 @@ export const env = {
         },
     },
 
-    NODE_ENV: process.env.NODE_ENV
+    NODE_ENV: process.env.NODE_ENV,
+
+    TELEGRAM: {
+        CHAT_ID: process.env.CHAT_ID,
+        BOT_TOKEN: process.env.BOT_TOKEN,
+    },
 };
